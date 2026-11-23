@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Загрузка файлов на сервер{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4 fw-bold text-dark">Загрузка файлов на сервер</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% set alert_class = 'danger' if category == 'error' else 'success' %}
+                <div class="alert alert-{{ alert_class }} alert-dismissible fade show shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-3">Выберите файл</h5>
+            <form method="POST" enctype="multipart/form-data" class="row g-3 align-items-center">
+                <div class="col-md-9">
+                    <input class="form-control" type="file" name="file" required>
+                </div>
+                <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-primary">Загрузить файл</button>
+                </div>
+            </form>
+            <div class="form-text mt-2 text-muted">
+                Запрещены к загрузке: <code>.exe</code>, <code>.sh</code>, <code>.php</code>, <code>.js</code>, <code>.bat</code>, <code>.cmd</code>, <code>.msi</code>, <code>.py</code>. Дубликаты по MD5 отклоняются автоматически.
+            </div>
+        </div>
+    </div>
+
+    <h2 class="h4 mb-3 fw-semibold">Загруженные файлы</h2>
+    
+    {% if files %}
+        <div class="card shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Исходное имя</th>
+                            <th>Имя файла (UUID)</th>
+                            <th>Расширение</th>
+                            <th>Дата загрузки</th>
+                            <th>Путь на сервере</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in files %}
+                        <tr>
+                            <td class="fw-semibold text-dark">{{ file.original_name }}</td>
+                            <td><code class="text-primary">{{ file.uuid_name }}</code></td>
+                            <td><span class="badge bg-secondary">{{ file.extension }}</span></td>
+                            <td class="text-muted small">{{ file.upload_date }}</td>
+                            <td><code class="text-muted">{{ file.server_path }}</code></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-secondary border-0 shadow-sm">
+            Пока не загружено ни одного файла. Воспользуйтесь формой выше!
+        </div>
+    {% endif %}
+{% endblock %}
