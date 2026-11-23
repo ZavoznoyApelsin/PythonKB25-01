@@ -175,4 +175,5 @@ def update_task(task_id):
 
 if __name__ == '__main__':
     initialize_db()
+    print('-' * 8)
     app.run(debug=True)
